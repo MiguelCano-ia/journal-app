@@ -10,6 +10,7 @@ export const NoteView = () => {
       justifyContent='space-between'
       alignItems='center'
       sx={{ mb: 1 }}
+      className='animate__animated animate__fadeIn animate__faster'
     >
       <Grid2>
         <Typography fontSize={ 39 } fontWeight='light'>28 de agosto, 2023</Typography>

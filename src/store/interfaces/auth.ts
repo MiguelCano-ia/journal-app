@@ -14,7 +14,7 @@ export interface UserState {
 };
 
 export const initialState: UserState = {
-  status: 'not-authenticated',
+  status: 'checking',
   user: {
     uid: null,
     email: null,
@@ -33,5 +33,4 @@ export interface RegisterUser {
 export interface LoginUser {
   email: string,
   password: string,
-  displayName?: string,
 };

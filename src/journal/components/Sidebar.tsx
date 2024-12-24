@@ -1,7 +1,11 @@
-import { TurnedInNot } from "@mui/icons-material"
 import { Box, Divider, Drawer, Grid2, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material"
+import { TurnedInNot } from "@mui/icons-material"
+import { useAppSelector } from "../../store"
 
 export const Sidebar = ({ drawerWidth = 240 }) => {
+
+  const { user: { displayName } } = useAppSelector( state => state.auth);
+
   return (
     <Box
       component='nav'
@@ -23,7 +27,7 @@ export const Sidebar = ({ drawerWidth = 240 }) => {
       >
         <Toolbar>
           <Typography variant='h6' noWrap component='div'>
-            Miguel Cano
+            { displayName }
           </Typography>
         </Toolbar>
         <Divider />

@@ -1,13 +1,7 @@
-import { loginUser, registerUser, signInWithGoogle } from "../../firebase/providers";
+import { loginUser, logoutFirebase, registerUser, signInWithGoogle } from "../../firebase/providers";
 import { LoginUser, RegisterUser } from "../interfaces";
 import { AppDispatch } from "../store";
 import { checkingCredentials, login, logout } from "./";
-
-export const checkingAuth = ( email, password ) => {
-  return async ( dispatch: AppDispatch ) => {
-    dispatch( checkingCredentials() );
-  }
-}
 
 export const startGoogleSignIn = () => {
   return async ( dispatch: AppDispatch ) => {
@@ -31,14 +25,21 @@ export const startCreatingUser = ( { email, password, displayName }: RegisterUse
   }
 }
 
-export const startLoginUser = ( { email, password, displayName }: LoginUser ) => {
+export const startLoginUser = ( { email, password }: LoginUser ) => {
   return async ( dispatch: AppDispatch ) => {
     dispatch( checkingCredentials() );
 
-    const { ok, uid, photoURL, errorMessage } = await loginUser({ email, password });
+    const { ok, uid, photoURL, displayName, errorMessage } = await loginUser({ email, password });
 
     if ( !ok ) return dispatch( logout( { errorMessage } ) );
 
     dispatch( login( { uid, email, displayName, photoURL } ) )
+  }
+}
+
+export const startLogout = () => {
+  return async ( dispatch: AppDispatch ) => {
+    await logoutFirebase();
+    dispatch( logout( { errorMessage: null } ) );
   }
 }
