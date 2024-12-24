@@ -1,9 +1,9 @@
 import  { Link as RouterLink } from 'react-router-dom';
-import { Button, Grid2, Link, TextField, Typography } from "@mui/material";
+import { Alert, Button, Grid2, Link, TextField, Typography } from "@mui/material";
 import { AuthLayout } from '../layout/AuthLayout';
 import { useForm } from '../../hooks';
-import { FormEvent, useState } from 'react';
-import { startCreatingUser, useAppDispatch } from '../../store';
+import { FormEvent, useMemo, useState } from 'react';
+import { startCreatingUser, useAppDispatch, useAppSelector } from '../../store';
 
 const formData = {
 	email: '',
@@ -21,6 +21,8 @@ export const RegisterPage = () => {
 
 	const dispatch = useAppDispatch();
 	const [ formSubmitted, setFormSubmitted ] = useState( false );
+	const { status, user: { errorMessage } } = useAppSelector( state => state.auth );
+	const isCheckingAuth = useMemo(() => status === 'checking', [ status ]);
 
 	const { formState, displayName, password, email, onInputChange, formValidation, isFormValid } = useForm( formData, formValidations );
 
@@ -87,11 +89,21 @@ export const RegisterPage = () => {
 						spacing={ 2 }
 						sx={{ mb: 2, mt:1 }}
 					>
+						<Grid2
+							size={{ xs: 12, md: 6 }}
+							display={ errorMessage === null ? 'none' : '' }
+						>
+							<Alert severity='error' >  
+								{ errorMessage }
+							</Alert>
+						</Grid2>
+
 						<Grid2 size={{ xs: 12, md: 6 }}>
 							<Button 
 								variant='contained'
 								fullWidth
 								type='submit'
+								disabled={ isCheckingAuth }
 							>
 								Create Accout
 							</Button>

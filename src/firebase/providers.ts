@@ -1,6 +1,6 @@
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, updateProfile } from "firebase/auth";
 import { FirebaseAuth } from "./config";
-import { RegisterUser } from "../store/interfaces";
+import { RegisterUser, LoginUser } from "../store/interfaces";
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -8,8 +8,6 @@ export const signInWithGoogle = async () => {
   try {
 
       const result = await signInWithPopup( FirebaseAuth, googleProvider );
-      // Obtener algun token o cosas que desee del usuario
-      /* const credentials = GoogleAuthProvider.credentialFromResult( result );*/
       const { displayName, email, photoURL, uid } = result.user;
 
       return {
@@ -21,7 +19,6 @@ export const signInWithGoogle = async () => {
       }
 
   } catch (error) {
-    // const errorCode = error.code;
     const errorMessage = (error as Error).message;
 
     return {
@@ -35,7 +32,12 @@ export const registerUser = async ({ email, password, displayName }: RegisterUse
   try {
     const resp = await createUserWithEmailAndPassword( FirebaseAuth, email, password );
     const { uid, photoURL } = resp.user;
-    console.log( resp );
+    // FirebaseAuth.currentUser: Usuario actual
+    if ( !FirebaseAuth.currentUser ) throw new Error("No current user");
+    await updateProfile( FirebaseAuth.currentUser, {
+      displayName,
+    } );
+  
     
     return {
       ok: true,
@@ -47,5 +49,20 @@ export const registerUser = async ({ email, password, displayName }: RegisterUse
 
   } catch (error) {
     return { ok: false, errorMessage: (error as Error).message };
+  }
+}
+
+export const loginUser = async ( { email, password }: LoginUser) => {
+  try {
+    const resp = await signInWithEmailAndPassword( FirebaseAuth, email, password);
+    const { uid, photoURL } = resp.user;
+
+  return {
+    ok: true,
+    uid,
+    photoURL,
+  }
+  } catch ( error ) {
+    return { ok: false, errorMessage: (error as Error).message }
   }
 }

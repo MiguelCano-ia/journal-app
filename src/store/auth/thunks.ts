@@ -1,5 +1,5 @@
-import { registerUser, signInWithGoogle } from "../../firebase/providers";
-import { RegisterUser } from "../interfaces";
+import { loginUser, registerUser, signInWithGoogle } from "../../firebase/providers";
+import { LoginUser, RegisterUser } from "../interfaces";
 import { AppDispatch } from "../store";
 import { checkingCredentials, login, logout } from "./";
 
@@ -23,7 +23,22 @@ export const startCreatingUser = ( { email, password, displayName }: RegisterUse
   return async ( dispatch: AppDispatch ) => {
     dispatch( checkingCredentials() );
 
-    const resp = await registerUser({ email, password, displayName });
-    console.log( resp);
+    const { ok, uid, photoURL, errorMessage } = await registerUser({ email, password, displayName });
+
+    if ( !ok ) return dispatch( logout({ errorMessage }) );
+
+    dispatch( login({ email, displayName, photoURL, uid }) ); 
+  }
+}
+
+export const startLoginUser = ( { email, password, displayName }: LoginUser ) => {
+  return async ( dispatch: AppDispatch ) => {
+    dispatch( checkingCredentials() );
+
+    const { ok, uid, photoURL, errorMessage } = await loginUser({ email, password });
+
+    if ( !ok ) return dispatch( logout( { errorMessage } ) );
+
+    dispatch( login( { uid, email, displayName, photoURL } ) )
   }
 }
