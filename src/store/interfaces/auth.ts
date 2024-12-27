@@ -25,9 +25,9 @@ export const initialState: UserState = {
 };
 
 export interface RegisterUser {
-  email: string;
-  password: string;
-  displayName: string;
+  email: string,
+  password: string,
+  displayName: string,
 };
 
 export interface LoginUser {

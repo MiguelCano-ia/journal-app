@@ -1,17 +1,27 @@
+// import { NoteView } from "../views/NoteView";
+import { Add } from "@mui/icons-material";
 import { Fab } from "@mui/material";
 import { JournalLayout } from "../layout/JournalLayout";
-import { NoteView } from "../views/NoteView";
-// import { NothingSelectedView } from "../views/NothingSelectedView";
-import { Add } from "@mui/icons-material";
+import { NothingSelectedView } from "../views/NothingSelectedView";
+import { startNewNote } from "../../store/journal";
+import { useAppDispatch } from "../../store";
 
 export const JournalPage = () => {
+
+	const dispatch = useAppDispatch();
+
+	const onClickNewNote = () => {
+		dispatch( startNewNote() );
+	}
+
 	return (
 		<JournalLayout>
 
-			{/* <NothingSelectedView /> */}
-			<NoteView />
+			<NothingSelectedView />
+			{/* <NoteView /> */}
 
 			<Fab
+				onClick={ onClickNewNote }
 				sx={{
 					color: 'white',
 					backgroundColor: 'error.main',
