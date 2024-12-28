@@ -6,15 +6,17 @@ import { FormEvent, useMemo } from 'react';
 import { Google } from "@mui/icons-material";
 import { useForm } from '../../hooks';
 
+const formData = {
+	email: '',
+	password: '',
+}
+
 export const LoginPage = () => {
 
 	const { status, user: { errorMessage } } = useAppSelector( state => state.auth );
 	const dispatch = useAppDispatch();
 
-	const { email, password, onInputChange } = useForm({
-		email: '',
-		password: '',
-	}, {});
+	const { email, password, onInputChange } = useForm( formData );
 
 	const isAuthenticating = useMemo(() => status === 'checking', [ status ]);
 

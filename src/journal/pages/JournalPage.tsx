@@ -1,14 +1,15 @@
-// import { NoteView } from "../views/NoteView";
+import { NoteView } from "../views/NoteView";
 import { Add } from "@mui/icons-material";
 import { Fab } from "@mui/material";
 import { JournalLayout } from "../layout/JournalLayout";
 import { NothingSelectedView } from "../views/NothingSelectedView";
 import { startNewNote } from "../../store/journal";
-import { useAppDispatch } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 
 export const JournalPage = () => {
 
 	const dispatch = useAppDispatch();
+	const { isSaving, active } = useAppSelector( state => state.journal );
 
 	const onClickNewNote = () => {
 		dispatch( startNewNote() );
@@ -17,8 +18,11 @@ export const JournalPage = () => {
 	return (
 		<JournalLayout>
 
-			<NothingSelectedView />
-			{/* <NoteView /> */}
+			{
+				( active.id )
+				 ? <NoteView /> 
+				 : <NothingSelectedView />
+			}
 
 			<Fab
 				onClick={ onClickNewNote }
@@ -30,8 +34,9 @@ export const JournalPage = () => {
 					},
 					position: 'fixed',
 					bottom: 50,
-					right: 50
+					right: 50,
 				}}
+				disabled={ isSaving }
 			>
 				<Add />
 			</Fab>

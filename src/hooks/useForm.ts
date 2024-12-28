@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useMemo } from 'react';
+import { ChangeEvent, useState, useMemo, useEffect } from 'react';
 
 type Validation<T> = {
   [K in keyof T]: [(value: T[K]) => boolean, string];
@@ -7,6 +7,11 @@ type Validation<T> = {
 export const useForm = <T extends object>( initialForm: T, formValidations: Validation<T> ) => {
   
   const [ formState, setFormState ] = useState( initialForm );
+
+  useEffect(() => {
+    setFormState( initialForm );
+  }, [ initialForm ])
+  
 
   const onInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = target;

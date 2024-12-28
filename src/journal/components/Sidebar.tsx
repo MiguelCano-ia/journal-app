@@ -1,10 +1,20 @@
-import { Box, Divider, Drawer, Grid2, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material"
-import { TurnedInNot } from "@mui/icons-material"
-import { useAppSelector } from "../../store"
+import { Box, Divider, Drawer, List, Toolbar, Typography } from "@mui/material"
+import { useAppDispatch, useAppSelector } from "../../store"
+import { SideBarItem } from "./SideBarItem";
+import { setActiveNote } from "../../store/journal";
 
 export const Sidebar = ({ drawerWidth = 240 }) => {
 
+  const dispatch = useAppDispatch();
   const { user: { displayName } } = useAppSelector( state => state.auth);
+  const { notes } = useAppSelector( state => state.journal );
+
+  const setActive = ( id: string ) => {
+    const note = notes.find( note => note.id === id);
+    if ( note ) {
+      dispatch( setActiveNote( note ) );
+    }
+  }
 
   return (
     <Box
@@ -34,20 +44,12 @@ export const Sidebar = ({ drawerWidth = 240 }) => {
 
         <List>
           {
-            ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio'].map( text => (
-              <ListItem key={ text } disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <TurnedInNot />
-                  </ListItemIcon>
-
-                  <Grid2 container>
-                    <ListItemText primary={ text } />
-                    <ListItemText secondary={ 'lorem ipsum dolor sit amet' } />
-                  </Grid2>
-
-                </ListItemButton>
-              </ListItem>
+            notes.map( note => (
+              <SideBarItem
+                key={ note.id } 
+                {...note }
+                setActive={ setActive }
+              />  
             ))
           }
         </List>
