@@ -1,9 +1,9 @@
-import { addNewEmptyNote, savingNewNote, setActiveNote, setNotes, setSaving, updateNote } from "./journalSlice";
+import { addNewEmptyNote, deleteNoteById, savingNewNote, setActiveNote, setNotes, setPhotosToActiveNote, setSaving, updateNote } from "./journalSlice";
 import { AppDispatch } from "../store";
-import { collection, doc, setDoc } from "firebase/firestore/lite";
+import { collection, deleteDoc, doc, setDoc } from "firebase/firestore/lite";
+import { fileUpload, loadNotes } from "../../helpers";
 import { FiresbasDB } from "../../firebase";
-import { RootState } from "@reduxjs/toolkit/query"
-import { loadNotes } from "../../helpers";
+import { RootState } from "../../store";
 
 export const startNewNote = () => {
   return async ( dispatch: AppDispatch, getState: () => RootState ) => {
@@ -24,7 +24,7 @@ export const startNewNote = () => {
     dispatch( addNewEmptyNote( newNote ) );
     dispatch( setActiveNote( newNote ) );
   }
-}
+};
 
 export const startLoadingNotes = () => {
   return async ( dispatch: AppDispatch, getState: () => RootState ) => {
@@ -46,11 +46,41 @@ export const startSaveNote = () => {
     const { active: note } = getState().journal;
 
     const noteToFireStore = { ...note };
-    delete noteToFireStore.id;
 
     const docRef = doc( FiresbasDB, `${ uid }/journal/notes/${ note.id }` );
     await setDoc( docRef, noteToFireStore, { merge: true } );
 
     dispatch( updateNote( note ));
+  }
+}
+
+export const startUploadingFiles = ( files: FileList ) => {
+  return async ( dispatch: AppDispatch ) => {
+
+    dispatch( setSaving() );
+
+    //Almacena las promesas
+    const fileUploadPromises = [];
+    for ( const file of files ) {
+      fileUploadPromises.push( fileUpload( file ));
+    }
+    // Resolvemos promesas de manera simultanea
+    const uploadFiles = await Promise.all( fileUploadPromises );
+    const photosUrls = uploadFiles.map( file => file.secure_url );
+
+    dispatch( setPhotosToActiveNote( photosUrls ));
+  }
+}
+
+export const startDeletingNote = () => {
+  return async ( dispatch: AppDispatch, getState: () => RootState ) => {
+
+    const { uid } = getState().auth.user;
+    const { active: note } = getState().journal;
+
+    const docRef = doc( FiresbasDB, `${ uid }/journal/notes/${ note.id }`);
+    await deleteDoc( docRef );
+
+    dispatch( deleteNoteById( note.id ));
   }
 }

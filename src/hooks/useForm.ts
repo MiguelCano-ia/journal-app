@@ -4,7 +4,10 @@ type Validation<T> = {
   [K in keyof T]: [(value: T[K]) => boolean, string];
 };
 
-export const useForm = <T extends object>( initialForm: T, formValidations: Validation<T> ) => {
+export const useForm = <T extends object>( 
+  initialForm: T, 
+  formValidations?: Validation<T> 
+) => {
   
   const [ formState, setFormState ] = useState( initialForm );
 
