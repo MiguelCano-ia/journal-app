@@ -1,8 +1,9 @@
 export const fileUpload = async ( file: File ) => {
 
   if ( !file ) throw new Error('No file to upload!')
-
-  const cloudUrl = 'https://api.cloudinary.com/v1_1/df1ul1dds/upload';
+  
+  const cloudName = import.meta.env.VITE_CLODINARY_NAME;
+  const cloudUrl = `https://api.cloudinary.com/v1_1/${ cloudName }/upload`;
 
   const formData = new FormData();
   formData.append('upload_preset','react-journal');
